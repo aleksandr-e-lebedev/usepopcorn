@@ -32,3 +32,15 @@ function Search({ placeholder, query, onQuery }: SearchProps) {
     />
   );
 }
+
+interface NumResultsProps {
+  numResults: number;
+}
+
+function NumResults({ numResults }: NumResultsProps) {
+  return (
+    <p className="num-results">
+      Found <strong>{numResults}</strong> results
+    </p>
+  );
+}
