@@ -44,3 +44,25 @@ function NumResults({ numResults }: NumResultsProps) {
     </p>
   );
 }
+
+interface NavBarProps {
+  query: string;
+  onQuery: (query: string) => void;
+  numResults: number;
+}
+
+export default function NavBar({ query, onQuery, numResults }: NavBarProps) {
+  return (
+    <header className="header">
+      <nav className="header__nav-bar">
+        <Logo />
+        <Search
+          placeholder="Search movies..."
+          query={query}
+          onQuery={onQuery}
+        />
+        <NumResults numResults={numResults} />
+      </nav>
+    </header>
+  );
+}
