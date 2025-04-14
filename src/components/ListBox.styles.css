@@ -1,0 +1,34 @@
+/* Movie Styles */
+
+.movie {
+  display: grid;
+
+  grid-template-columns: 4rem 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'movie-image movie-title'
+    'movie-image movie-description';
+
+  column-gap: 2.4rem;
+  align-items: center;
+}
+
+.movie__image {
+  grid-area: movie-image;
+  width: 100%;
+}
+
+.movie__title {
+  grid-area: movie-title;
+  font-size: 1.8rem;
+}
+
+.movie__description {
+  grid-area: movie-description;
+
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  font-size: 1.6rem;
+}
