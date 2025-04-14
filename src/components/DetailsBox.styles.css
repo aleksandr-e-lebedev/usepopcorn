@@ -1,3 +1,16 @@
+/* DetailsBox Styles */
+
+.details-box {
+  position: relative;
+}
+
+.details-box__toggle-button {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 10;
+}
+
 /* MovieDetails Styles */
 
 .movie-details {

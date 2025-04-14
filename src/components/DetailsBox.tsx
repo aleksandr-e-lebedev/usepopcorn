@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import Box from './Box';
+import ToggleButton from './ToggleButton';
 import StarRating from './StarRating';
 
 import { OmdbMovieDetails, MovieDetailsType, WatchedMovieType } from '@/types';
@@ -91,5 +95,24 @@ function MovieDetails() {
         </p>
       </section>
     </div>
+  );
+}
+
+export default function DetailsBox() {
+  const [isOpen, setIsOpen] = useState(true);
+
+  function handleToggle() {
+    setIsOpen(!isOpen);
+  }
+
+  return (
+    <Box className="details-box">
+      <ToggleButton
+        className="details-box__toggle-button"
+        isOpen={isOpen}
+        onToggle={handleToggle}
+      />
+      {isOpen && <MovieDetails />}
+    </Box>
   );
 }
