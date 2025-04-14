@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 const starStyle = {
   display: 'block',
   cursor: 'pointer',
@@ -60,5 +62,90 @@ function Star(props: StarProps) {
         </svg>
       )}
     </span>
+  );
+}
+
+const containerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+};
+
+const starContainerStyle = {
+  display: 'flex',
+};
+
+const textStyle = {
+  margin: '0',
+  lineHeight: '1',
+};
+
+interface StarRatingProps {
+  className?: string;
+  maxRating?: number;
+  defaultRating?: number;
+  messages?: string[];
+  size?: number;
+  color?: string;
+  onSetRating?: (rating: number) => void;
+}
+
+export default function StarRating(props: StarRatingProps) {
+  const {
+    className = '',
+    maxRating = 5,
+    defaultRating = 0,
+    messages = [],
+    size = 48,
+    color = '#fcc419',
+    onSetRating,
+  } = props;
+
+  const [rating, setRating] = useState(defaultRating);
+  const [tempRating, setTempRating] = useState(0);
+
+  function handleRate(starNum: number) {
+    setRating(starNum);
+
+    if (onSetRating) {
+      onSetRating(starNum);
+    }
+  }
+
+  function handleHoverIn(starNum: number) {
+    setTempRating(starNum);
+  }
+
+  function handleHoverOut() {
+    setTempRating(0);
+  }
+
+  return (
+    <div style={containerStyle} className={className}>
+      <div style={starContainerStyle}>
+        {Array.from({ length: maxRating }, (_item, index) => (
+          <Star
+            key={index}
+            size={size}
+            color={color}
+            full={tempRating ? tempRating >= index + 1 : rating >= index + 1}
+            onRate={() => {
+              handleRate(index + 1);
+            }}
+            onHoverIn={() => {
+              handleHoverIn(index + 1);
+            }}
+            onHoverOut={() => {
+              handleHoverOut();
+            }}
+          />
+        ))}
+      </div>
+      <p style={{ ...textStyle, fontSize: size / 1.5, color }}>
+        {messages.length === maxRating
+          ? messages[tempRating ? tempRating - 1 : rating - 1]
+          : tempRating || rating || ''}
+      </p>
+    </div>
   );
 }
