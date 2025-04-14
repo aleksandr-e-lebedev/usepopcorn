@@ -1,3 +1,6 @@
+import List from './List';
+import ListItem from './ListItem';
+
 import { WatchedMovieType } from '@/types';
 import './WatchedBox.styles.css';
 
@@ -76,5 +79,23 @@ function WatchedMovie({ movie }: WatchedMovieProps) {
         </button>
       </div>
     </div>
+  );
+}
+
+interface WatchedMovieListProps {
+  watchedMovies: WatchedMovieType[];
+}
+
+function WatchedMovieList({ watchedMovies }: WatchedMovieListProps) {
+  const movies = watchedMovies;
+
+  return (
+    <List className="watched-movie-list">
+      {movies.map((movie) => (
+        <ListItem key={movie.imdbID} className="watched-movie-list__item">
+          <WatchedMovie movie={movie} />
+        </ListItem>
+      ))}
+    </List>
   );
 }
