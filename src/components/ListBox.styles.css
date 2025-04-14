@@ -1,3 +1,16 @@
+/* ListBox Styles */
+
+.list-box {
+  position: relative;
+}
+
+.list-box__toggle-button {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 10;
+}
+
 /* MovieList Styles */
 
 .movie-list__item {

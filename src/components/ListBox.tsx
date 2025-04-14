@@ -1,3 +1,7 @@
+import { useState } from 'react';
+
+import Box from './Box';
+import ToggleButton from './ToggleButton';
 import List from './List';
 import ListItem from './ListItem';
 
@@ -38,5 +42,28 @@ function MovieList({ movies }: MovieListProps) {
         </ListItem>
       ))}
     </List>
+  );
+}
+
+interface ListBoxProps {
+  movies: MovieType[];
+}
+
+export default function ListBox({ movies }: ListBoxProps) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  function handleToggle() {
+    setIsOpen(!isOpen);
+  }
+
+  return (
+    <Box className="list-box">
+      <ToggleButton
+        className="list-box__toggle-button"
+        isOpen={isOpen}
+        onToggle={handleToggle}
+      />
+      {isOpen && <MovieList movies={movies} />}
+    </Box>
   );
 }
