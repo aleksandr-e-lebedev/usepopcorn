@@ -1,12 +1,12 @@
+import { useState } from 'react';
+
+import Box from './Box';
+import ToggleButton from './ToggleButton';
 import List from './List';
 import ListItem from './ListItem';
 
 import { WatchedMovieType } from '@/types';
 import './WatchedBox.styles.css';
-
-interface WatchedSummaryProps {
-  watchedMovies: WatchedMovieType[];
-}
 
 function getAverage(arr: number[]) {
   return Number(arr.reduce((acc, cur) => acc + cur / arr.length, 0).toFixed(2));
@@ -14,6 +14,10 @@ function getAverage(arr: number[]) {
 
 function getTotal(arr: number[]) {
   return arr.reduce((acc, cur) => acc + cur, 0);
+}
+
+interface WatchedSummaryProps {
+  watchedMovies: WatchedMovieType[];
 }
 
 function WatchedSummary({ watchedMovies }: WatchedSummaryProps) {
@@ -97,5 +101,33 @@ function WatchedMovieList({ watchedMovies }: WatchedMovieListProps) {
         </ListItem>
       ))}
     </List>
+  );
+}
+
+interface WatchedBoxProps {
+  watchedMovies: WatchedMovieType[];
+}
+
+export default function WatchedBox({ watchedMovies }: WatchedBoxProps) {
+  const [isOpen, setIsOpen] = useState(true);
+
+  function handleToggle() {
+    setIsOpen(!isOpen);
+  }
+
+  return (
+    <Box className="watched-box">
+      <ToggleButton
+        className="watched-box__toggle-button"
+        isOpen={isOpen}
+        onToggle={handleToggle}
+      />
+      {isOpen && (
+        <div className="watched-box__container">
+          <WatchedSummary watchedMovies={watchedMovies} />
+          <WatchedMovieList watchedMovies={watchedMovies} />
+        </div>
+      )}
+    </Box>
   );
 }

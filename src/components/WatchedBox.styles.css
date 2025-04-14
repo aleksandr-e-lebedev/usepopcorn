@@ -1,3 +1,21 @@
+/* WatchedBox Styles */
+
+.watched-box {
+  position: relative;
+}
+
+.watched-box__toggle-button {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 10;
+}
+
+.watched-box__container {
+  display: flex;
+  flex-direction: column;
+}
+
 /* WatchedSummary Styles */
 
 .summary {
