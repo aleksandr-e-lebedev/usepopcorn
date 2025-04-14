@@ -44,3 +44,37 @@ function WatchedSummary({ watchedMovies }: WatchedSummaryProps) {
     </div>
   );
 }
+
+interface WatchedMovieProps {
+  movie: WatchedMovieType;
+}
+
+function WatchedMovie({ movie }: WatchedMovieProps) {
+  return (
+    <div className="watched-movie">
+      <img
+        className="watched-movie__image"
+        src={movie.poster}
+        alt={`${movie.title} poster`}
+      />
+      <h3 className="watched-movie__title">{movie.title}</h3>
+      <div className="watched-movie__description">
+        <p className="watched-movie__text">
+          <span>⭐️</span>
+          <span>{movie.imdbRating}</span>
+        </p>
+        <p className="watched-movie__text">
+          <span>🌟</span>
+          <span>{movie.userRating}</span>
+        </p>
+        <p className="watched-movie__text">
+          <span>⏳</span>
+          <span>{movie.runtime} min</span>
+        </p>
+        <button type="button" className="watched-movie__delete-button">
+          X
+        </button>
+      </div>
+    </div>
+  );
+}
