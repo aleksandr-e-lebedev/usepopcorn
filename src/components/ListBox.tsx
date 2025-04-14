@@ -1,3 +1,6 @@
+import List from './List';
+import ListItem from './ListItem';
+
 import { MovieType } from '@/types';
 import './ListBox.styles.css';
 
@@ -19,5 +22,21 @@ function Movie({ movie }: MovieProps) {
         <span className="movie__year">{movie.year}</span>
       </p>
     </div>
+  );
+}
+
+interface MovieListProps {
+  movies: MovieType[] | null;
+}
+
+function MovieList({ movies }: MovieListProps) {
+  return (
+    <List className="movie-list">
+      {movies?.map((movie) => (
+        <ListItem key={movie.imdbID} className="movie-list__item">
+          <Movie movie={movie} />
+        </ListItem>
+      ))}
+    </List>
   );
 }
