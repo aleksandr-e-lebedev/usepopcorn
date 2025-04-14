@@ -1,4 +1,9 @@
 import NavBar from './components/NavBar';
+import Content from './components/Content';
+
+import ListBox from './components/ListBox';
+import DetailsBox from './components/DetailsBox';
+import WatchedBox from './components/WatchedBox';
 
 import { OmdbMovie, MovieType } from './types';
 import { tempMovieData, tempWatchedData } from '../temp/data';
@@ -16,6 +21,7 @@ function convertMovies(movies: OmdbMovie[]): MovieType[] {
 export default function App() {
   const query = '';
   const movies = convertMovies(tempMovieData);
+  const selectedMovieId = movies.at(1)?.imdbID;
   const watchedMovies = tempWatchedData;
 
   function handleQuery() {
@@ -25,10 +31,14 @@ export default function App() {
   return (
     <div className="app">
       <NavBar query={query} onQuery={handleQuery} numResults={movies.length} />
-
-      <main>
-        <h2>Content</h2>
-      </main>
+      <Content>
+        <ListBox movies={movies} />
+        {selectedMovieId ? (
+          <DetailsBox />
+        ) : (
+          <WatchedBox watchedMovies={watchedMovies} />
+        )}
+      </Content>
     </div>
   );
 }
