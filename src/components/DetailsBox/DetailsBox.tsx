@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import Box from './Box';
-import ToggleButton from './ToggleButton';
-import StarRating from './StarRating';
+import Box from '@/components/Box';
+import ToggleButton from '@/components/ToggleButton';
+import StarRating from '@/components/StarRating';
 
 import { OmdbMovieDetails, MovieDetailsType, WatchedMovieType } from '@/types';
-import { tempMovieDetailsData, tempWatchedMovie } from '../../temp/data';
+import { tempMovieDetailsData, tempWatchedMovie } from '../../../temp/data';
 import './DetailsBox.styles.css';
 
 function convertMovieDetails(movie: OmdbMovieDetails): MovieDetailsType {

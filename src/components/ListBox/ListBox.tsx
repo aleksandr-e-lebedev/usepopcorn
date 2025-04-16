@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import Box from './Box';
-import ToggleButton from './ToggleButton';
-import List from './List';
-import ListItem from './ListItem';
+import Box from '@/components/Box';
+import ToggleButton from '@/components/ToggleButton';
+import List from '@/components/List';
+import ListItem from '@/components/ListItem';
 
 import { MovieType } from '@/types';
 import './ListBox.styles.css';
