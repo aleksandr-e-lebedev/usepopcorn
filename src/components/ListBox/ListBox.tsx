@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
 import Box from '@/components/Box';
+import Loader from '@/components/Loader';
+import ErrorMessage from '@/components/ErrorMessage';
 import ToggleButton from '@/components/ToggleButton';
 import List from '@/components/List';
 import ListItem from '@/components/ListItem';
@@ -46,11 +48,16 @@ function MovieList({ movies }: MovieListProps) {
 }
 
 interface ListBoxProps {
+  status: 'idle' | 'loading' | 'success';
   movies: MovieType[];
+  error: Error | null;
 }
 
-export default function ListBox({ movies }: ListBoxProps) {
+export default function ListBox({ status, movies, error }: ListBoxProps) {
   const [isOpen, setIsOpen] = useState(true);
+
+  const isLoading = status === 'loading';
+  const isLoaded = status === 'success';
 
   function handleToggle() {
     setIsOpen(!isOpen);
@@ -58,12 +65,18 @@ export default function ListBox({ movies }: ListBoxProps) {
 
   return (
     <Box className="list-box">
-      <ToggleButton
-        className="list-box__toggle-button"
-        isOpen={isOpen}
-        onToggle={handleToggle}
-      />
-      {isOpen && <MovieList movies={movies} />}
+      {isLoading && <Loader />}
+      {isLoaded && (
+        <>
+          <ToggleButton
+            className="list-box__toggle-button"
+            isOpen={isOpen}
+            onToggle={handleToggle}
+          />
+          {isOpen && <MovieList movies={movies} />}
+        </>
+      )}
+      {!isLoaded && error && <ErrorMessage message={error.message} />}
     </Box>
   );
 }
