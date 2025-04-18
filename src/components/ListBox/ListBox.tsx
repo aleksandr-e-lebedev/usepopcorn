@@ -33,13 +33,20 @@ function Movie({ movie }: MovieProps) {
 
 interface MovieListProps {
   movies: MovieType[] | null;
+  onSelectMovie: (id: string) => void;
 }
 
-function MovieList({ movies }: MovieListProps) {
+function MovieList({ movies, onSelectMovie }: MovieListProps) {
   return (
     <List className="movie-list">
       {movies?.map((movie) => (
-        <ListItem key={movie.imdbID} className="movie-list__item">
+        <ListItem
+          key={movie.imdbID}
+          className="movie-list__item"
+          onClick={() => {
+            onSelectMovie(movie.imdbID);
+          }}
+        >
           <Movie movie={movie} />
         </ListItem>
       ))}
@@ -51,9 +58,12 @@ interface ListBoxProps {
   status: 'idle' | 'loading' | 'success';
   movies: MovieType[];
   error: Error | null;
+  onSelectMovie: (id: string) => void;
 }
 
-export default function ListBox({ status, movies, error }: ListBoxProps) {
+export default function ListBox(props: ListBoxProps) {
+  const { status, movies, error, onSelectMovie } = props;
+
   const [isOpen, setIsOpen] = useState(true);
 
   const isLoading = status === 'loading';
@@ -73,7 +83,9 @@ export default function ListBox({ status, movies, error }: ListBoxProps) {
             isOpen={isOpen}
             onToggle={handleToggle}
           />
-          {isOpen && <MovieList movies={movies} />}
+          {isOpen && (
+            <MovieList movies={movies} onSelectMovie={onSelectMovie} />
+          )}
         </>
       )}
       {!isLoaded && error && <ErrorMessage message={error.message} />}

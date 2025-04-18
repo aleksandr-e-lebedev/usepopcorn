@@ -1,31 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@/components/Box';
+import Loader from '@/components/Loader';
+import ErrorMessage from '@/components/ErrorMessage';
 import ToggleButton from '@/components/ToggleButton';
 import StarRating from '@/components/StarRating';
 
 import { OmdbMovieDetails, MovieDetailsType, WatchedMovieType } from '@/types';
-import { tempMovieDetailsData, tempWatchedMovie } from '../../../temp/data';
+import { OMDB_API_KEY, DEFAULT_ERROR_MESSAGE } from '@/config';
+import { tempWatchedMovie } from '../../../temp/data';
 import './DetailsBox.styles.css';
 
-function convertMovieDetails(movie: OmdbMovieDetails): MovieDetailsType {
-  return {
-    actors: movie.Actors,
-    director: movie.Director,
-    genre: movie.Genre,
-    plot: movie.Plot,
-    poster: movie.Poster,
-    released: movie.Released,
-    runtime: parseInt(movie.Runtime, 10),
-    title: movie.Title,
-    year: movie.Year,
-    imdbID: movie.imdbID,
-    imdbRating: Number(movie.imdbRating),
-  };
+interface MovieDetailsProps {
+  movie: MovieDetailsType;
 }
 
-function MovieDetails() {
-  const movie: MovieDetailsType = convertMovieDetails(tempMovieDetailsData);
+function MovieDetails({ movie }: MovieDetailsProps) {
   const watchedMovie: WatchedMovieType | null = tempWatchedMovie;
   const userRating = 0;
 
@@ -98,8 +88,99 @@ function MovieDetails() {
   );
 }
 
-export default function DetailsBox() {
+type Status = 'idle' | 'loading' | 'success';
+
+interface ErrorResponse {
+  Response: 'False';
+  Error: string;
+}
+
+type OmdbResponse = OmdbMovieDetails | ErrorResponse;
+
+function convertMovieDetails(movie: OmdbMovieDetails): MovieDetailsType {
+  return {
+    actors: movie.Actors,
+    director: movie.Director,
+    genre: movie.Genre,
+    plot: movie.Plot,
+    poster: movie.Poster,
+    released: movie.Released,
+    runtime: parseInt(movie.Runtime, 10),
+    title: movie.Title,
+    year: movie.Year,
+    imdbID: movie.imdbID,
+    imdbRating: Number(movie.imdbRating),
+  };
+}
+
+interface DetailsBoxProps {
+  movieId: string;
+}
+
+export default function DetailsBox(props: DetailsBoxProps) {
+  const { movieId } = props;
+
   const [isOpen, setIsOpen] = useState(true);
+
+  const [status, setStatus] = useState<Status>('idle');
+  const [movie, setMovie] = useState<MovieDetailsType | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  const isLoading = status === 'loading';
+  const isLoaded = status === 'success';
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchMovieDetails() {
+      try {
+        setStatus('loading');
+        setError(null);
+
+        const response = await fetch(
+          `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${movieId}`,
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error(DEFAULT_ERROR_MESSAGE);
+        }
+
+        const omdbResponse = (await response.json()) as OmdbResponse;
+
+        if (omdbResponse.Response === 'True') {
+          setStatus('success');
+          setMovie(convertMovieDetails(omdbResponse));
+        } else {
+          throw new Error(omdbResponse.Error);
+        }
+      } catch (err) {
+        setStatus('idle');
+        setMovie(null);
+
+        if (err instanceof Error) {
+          if (err.name !== 'AbortError') {
+            setError(err);
+          }
+        } else {
+          setError(new Error(DEFAULT_ERROR_MESSAGE));
+        }
+      }
+    }
+
+    if (!movieId) {
+      setStatus('idle');
+      setMovie(null);
+      setError(null);
+      return;
+    }
+
+    void fetchMovieDetails();
+
+    return () => {
+      controller.abort();
+    };
+  }, [movieId]);
 
   function handleToggle() {
     setIsOpen(!isOpen);
@@ -107,12 +188,18 @@ export default function DetailsBox() {
 
   return (
     <Box className="details-box">
-      <ToggleButton
-        className="details-box__toggle-button"
-        isOpen={isOpen}
-        onToggle={handleToggle}
-      />
-      {isOpen && <MovieDetails />}
+      {isLoading && <Loader />}
+      {isLoaded && movie && (
+        <>
+          <ToggleButton
+            className="details-box__toggle-button"
+            isOpen={isOpen}
+            onToggle={handleToggle}
+          />
+          {isOpen && <MovieDetails movie={movie} />}
+        </>
+      )}
+      {!isLoaded && error && <ErrorMessage message={error.message} />}
     </Box>
   );
 }

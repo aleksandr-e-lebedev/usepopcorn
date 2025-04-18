@@ -43,12 +43,17 @@ export default function App() {
   const [movies, setMovies] = useState<MovieType[]>([]);
   const [error, setError] = useState<Error | null>(null);
 
+  const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
+
   const numResults = movies.length;
-  const selectedMovieId = movies.at(1)?.imdbID;
   const watchedMovies = tempWatchedData;
 
   function handleQuery(query: string) {
     setQuery(query);
+  }
+
+  function handleSelectMovie(id: string) {
+    setSelectedMovieId((currentId) => (id === currentId ? null : id));
   }
 
   useEffect(() => {
@@ -108,9 +113,14 @@ export default function App() {
     <div className="app">
       <NavBar query={query} onQuery={handleQuery} numResults={numResults} />
       <Content>
-        <ListBox status={status} movies={movies} error={error} />
+        <ListBox
+          status={status}
+          movies={movies}
+          error={error}
+          onSelectMovie={handleSelectMovie}
+        />
         {selectedMovieId ? (
-          <DetailsBox />
+          <DetailsBox movieId={selectedMovieId} />
         ) : (
           <WatchedBox watchedMovies={watchedMovies} />
         )}
