@@ -49,6 +49,18 @@ function MovieDetails(props: MovieDetailsProps) {
     };
   }, [movie]);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key.toLowerCase() === 'Escape'.toLowerCase()) onCloseDetails();
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onCloseDetails]);
+
   return (
     <div className="movie-details">
       <header className="movie-details__header">
