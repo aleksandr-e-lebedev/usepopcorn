@@ -66,6 +66,11 @@ export default function App() {
     setSelectedMovieId(null);
   }
 
+  function handleDeleteWatched(id: string) {
+    const moviesToSet = watchedMovies.filter((movie) => movie.imdbID !== id);
+    setWatchedMovies(moviesToSet);
+  }
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -137,7 +142,10 @@ export default function App() {
             onCloseDetails={handleCloseDetails}
           />
         ) : (
-          <WatchedBox watchedMovies={watchedMovies} />
+          <WatchedBox
+            watchedMovies={watchedMovies}
+            onDeleteWatched={handleDeleteWatched}
+          />
         )}
       </Content>
     </div>

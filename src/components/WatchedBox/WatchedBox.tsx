@@ -54,9 +54,14 @@ function WatchedSummary({ watchedMovies }: WatchedSummaryProps) {
 
 interface WatchedMovieProps {
   movie: WatchedMovieType;
+  onDeleteWatched: (id: string) => void;
 }
 
-function WatchedMovie({ movie }: WatchedMovieProps) {
+function WatchedMovie({ movie, onDeleteWatched }: WatchedMovieProps) {
+  function handleDeleteButtonClick() {
+    onDeleteWatched(movie.imdbID);
+  }
+
   return (
     <div className="watched-movie">
       <img
@@ -78,7 +83,11 @@ function WatchedMovie({ movie }: WatchedMovieProps) {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
-        <button type="button" className="watched-movie__delete-button">
+        <button
+          type="button"
+          className="watched-movie__delete-button"
+          onClick={handleDeleteButtonClick}
+        >
           X
         </button>
       </div>
@@ -88,16 +97,17 @@ function WatchedMovie({ movie }: WatchedMovieProps) {
 
 interface WatchedMovieListProps {
   watchedMovies: WatchedMovieType[];
+  onDeleteWatched: (id: string) => void;
 }
 
-function WatchedMovieList({ watchedMovies }: WatchedMovieListProps) {
-  const movies = watchedMovies;
+function WatchedMovieList(props: WatchedMovieListProps) {
+  const { watchedMovies: movies, onDeleteWatched } = props;
 
   return (
     <List className="watched-movie-list">
       {movies.map((movie) => (
         <ListItem key={movie.imdbID} className="watched-movie-list__item">
-          <WatchedMovie movie={movie} />
+          <WatchedMovie movie={movie} onDeleteWatched={onDeleteWatched} />
         </ListItem>
       ))}
     </List>
@@ -106,9 +116,11 @@ function WatchedMovieList({ watchedMovies }: WatchedMovieListProps) {
 
 interface WatchedBoxProps {
   watchedMovies: WatchedMovieType[];
+  onDeleteWatched: (id: string) => void;
 }
 
-export default function WatchedBox({ watchedMovies }: WatchedBoxProps) {
+export default function WatchedBox(props: WatchedBoxProps) {
+  const { watchedMovies, onDeleteWatched } = props;
   const [isOpen, setIsOpen] = useState(true);
 
   function handleToggle() {
@@ -125,7 +137,10 @@ export default function WatchedBox({ watchedMovies }: WatchedBoxProps) {
       {isOpen && (
         <div className="watched-box__container">
           <WatchedSummary watchedMovies={watchedMovies} />
-          <WatchedMovieList watchedMovies={watchedMovies} />
+          <WatchedMovieList
+            watchedMovies={watchedMovies}
+            onDeleteWatched={onDeleteWatched}
+          />
         </div>
       )}
     </Box>
