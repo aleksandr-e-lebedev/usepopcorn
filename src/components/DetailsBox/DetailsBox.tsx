@@ -39,6 +39,16 @@ function MovieDetails(props: MovieDetailsProps) {
     onCloseDetails();
   }
 
+  useEffect(() => {
+    const initialTitle = document.title;
+
+    document.title = `Movie | ${movie.title}`;
+
+    return () => {
+      document.title = initialTitle;
+    };
+  }, [movie]);
+
   return (
     <div className="movie-details">
       <header className="movie-details__header">
