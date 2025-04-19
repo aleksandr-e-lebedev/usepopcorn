@@ -8,23 +8,31 @@ import StarRating from '@/components/StarRating';
 
 import { OmdbMovieDetails, MovieDetailsType, WatchedMovieType } from '@/types';
 import { OMDB_API_KEY, DEFAULT_ERROR_MESSAGE } from '@/config';
-import { tempWatchedMovie } from '../../../temp/data';
 import './DetailsBox.styles.css';
 
 interface MovieDetailsProps {
   movie: MovieDetailsType;
+  watchedMovie: WatchedMovieType | null;
+  onAddWatched: (movie: WatchedMovieType) => void;
+  onCloseDetails: () => void;
 }
 
-function MovieDetails({ movie }: MovieDetailsProps) {
-  const watchedMovie: WatchedMovieType | null = tempWatchedMovie;
-  const userRating = 0;
+function MovieDetails(props: MovieDetailsProps) {
+  const { movie, watchedMovie, onAddWatched, onCloseDetails } = props;
+  const [userRating, setUserRating] = useState(0);
 
-  function handleSetRating() {
-    return;
+  function handleSetRating(rating: number) {
+    setUserRating(rating);
   }
 
   function handleAddButtonClick() {
-    return;
+    const newWatchedMovie: WatchedMovieType = {
+      ...movie,
+      userRating,
+    };
+
+    onAddWatched(newWatchedMovie);
+    onCloseDetails();
   }
 
   return (
@@ -115,10 +123,13 @@ function convertMovieDetails(movie: OmdbMovieDetails): MovieDetailsType {
 
 interface DetailsBoxProps {
   movieId: string;
+  watchedMovie: WatchedMovieType | null;
+  onAddWatched: (movie: WatchedMovieType) => void;
+  onCloseDetails: () => void;
 }
 
 export default function DetailsBox(props: DetailsBoxProps) {
-  const { movieId } = props;
+  const { movieId, watchedMovie, onAddWatched, onCloseDetails } = props;
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -196,7 +207,14 @@ export default function DetailsBox(props: DetailsBoxProps) {
             isOpen={isOpen}
             onToggle={handleToggle}
           />
-          {isOpen && <MovieDetails movie={movie} />}
+          {isOpen && (
+            <MovieDetails
+              movie={movie}
+              watchedMovie={watchedMovie}
+              onAddWatched={onAddWatched}
+              onCloseDetails={onCloseDetails}
+            />
+          )}
         </>
       )}
       {!isLoaded && error && <ErrorMessage message={error.message} />}

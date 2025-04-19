@@ -7,9 +7,8 @@ import ListBox from './components/ListBox';
 import DetailsBox from './components/DetailsBox';
 import WatchedBox from './components/WatchedBox';
 
-import { OmdbMovie, MovieType } from './types';
+import { OmdbMovie, MovieType, WatchedMovieType } from './types';
 import { OMDB_API_KEY, DEFAULT_ERROR_MESSAGE } from '@/config';
-import { tempWatchedData } from '../temp/data';
 import './App.styles.css';
 
 type Status = 'idle' | 'loading' | 'success';
@@ -44,9 +43,12 @@ export default function App() {
   const [error, setError] = useState<Error | null>(null);
 
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
+  const [watchedMovies, setWatchedMovies] = useState<WatchedMovieType[]>([]);
 
   const numResults = movies.length;
-  const watchedMovies = tempWatchedData;
+
+  const selectedWatchedMovie =
+    watchedMovies.find((movie) => movie.imdbID === selectedMovieId) ?? null;
 
   function handleQuery(query: string) {
     setQuery(query);
@@ -54,6 +56,14 @@ export default function App() {
 
   function handleSelectMovie(id: string) {
     setSelectedMovieId((currentId) => (id === currentId ? null : id));
+  }
+
+  function handleAddWatched(movie: WatchedMovieType) {
+    setWatchedMovies([...watchedMovies, movie]);
+  }
+
+  function handleCloseDetails() {
+    setSelectedMovieId(null);
   }
 
   useEffect(() => {
@@ -120,7 +130,12 @@ export default function App() {
           onSelectMovie={handleSelectMovie}
         />
         {selectedMovieId ? (
-          <DetailsBox movieId={selectedMovieId} />
+          <DetailsBox
+            movieId={selectedMovieId}
+            watchedMovie={selectedWatchedMovie}
+            onAddWatched={handleAddWatched}
+            onCloseDetails={handleCloseDetails}
+          />
         ) : (
           <WatchedBox watchedMovies={watchedMovies} />
         )}
