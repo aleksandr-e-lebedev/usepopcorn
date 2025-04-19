@@ -35,10 +35,18 @@ function MovieDetails(props: MovieDetailsProps) {
     onCloseDetails();
   }
 
+  function handleBackButtonClick() {
+    onCloseDetails();
+  }
+
   return (
     <div className="movie-details">
       <header className="movie-details__header">
-        <button type="button" className="movie-details__back-button">
+        <button
+          type="button"
+          className="movie-details__back-button"
+          onClick={handleBackButtonClick}
+        >
           &larr;
         </button>
         <img
