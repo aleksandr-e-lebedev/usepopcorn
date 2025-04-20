@@ -35,6 +35,25 @@ function convertMovies(movies: OmdbMovie[]): MovieType[] {
   }));
 }
 
+type StoredWatchedMovies = string | null | WatchedMovieType[];
+
+function getWatchedMoviesFromStorage(): WatchedMovieType[] {
+  let movies: StoredWatchedMovies = localStorage.getItem('watchedMovies');
+
+  if (movies) {
+    movies = JSON.parse(movies) as WatchedMovieType[];
+  } else {
+    movies = [];
+  }
+
+  return movies;
+}
+
+function setWatchedMoviesToStorage(movies: WatchedMovieType[]) {
+  const moviesToStore = JSON.stringify(movies);
+  localStorage.setItem('watchedMovies', moviesToStore);
+}
+
 export default function App() {
   const [query, setQuery] = useState('');
 
@@ -43,7 +62,9 @@ export default function App() {
   const [error, setError] = useState<Error | null>(null);
 
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
-  const [watchedMovies, setWatchedMovies] = useState<WatchedMovieType[]>([]);
+  const [watchedMovies, setWatchedMovies] = useState<WatchedMovieType[]>(
+    getWatchedMoviesFromStorage,
+  );
 
   const numResults = movies.length;
 
@@ -123,6 +144,10 @@ export default function App() {
       controller.abort();
     };
   }, [query]);
+
+  useEffect(() => {
+    setWatchedMoviesToStorage(watchedMovies);
+  }, [watchedMovies]);
 
   return (
     <div className="app">
