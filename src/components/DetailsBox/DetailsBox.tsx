@@ -7,7 +7,7 @@ import ToggleButton from '@/components/ToggleButton';
 import StarRating from '@/components/StarRating';
 
 import { MovieDetailsType, WatchedMovieType } from '@/types';
-import { useDetails } from '@/hooks';
+import { useDocumentTitle, useDetails } from '@/hooks';
 import './DetailsBox.styles.css';
 
 interface MovieDetailsProps {
@@ -39,15 +39,7 @@ function MovieDetails(props: MovieDetailsProps) {
     onCloseDetails();
   }
 
-  useEffect(() => {
-    const initialTitle = document.title;
-
-    document.title = `Movie | ${movie.title}`;
-
-    return () => {
-      document.title = initialTitle;
-    };
-  }, [movie]);
+  useDocumentTitle(`Movie | ${movie.title}`);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
