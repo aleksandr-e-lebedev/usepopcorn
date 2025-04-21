@@ -6,8 +6,8 @@ import ErrorMessage from '@/components/ErrorMessage';
 import ToggleButton from '@/components/ToggleButton';
 import StarRating from '@/components/StarRating';
 
-import { OmdbMovieDetails, MovieDetailsType, WatchedMovieType } from '@/types';
-import { OMDB_API_KEY, DEFAULT_ERROR_MESSAGE } from '@/config';
+import { MovieDetailsType, WatchedMovieType } from '@/types';
+import { useDetails } from '@/hooks';
 import './DetailsBox.styles.css';
 
 interface MovieDetailsProps {
@@ -126,31 +126,6 @@ function MovieDetails(props: MovieDetailsProps) {
   );
 }
 
-type Status = 'idle' | 'loading' | 'success';
-
-interface ErrorResponse {
-  Response: 'False';
-  Error: string;
-}
-
-type OmdbResponse = OmdbMovieDetails | ErrorResponse;
-
-function convertMovieDetails(movie: OmdbMovieDetails): MovieDetailsType {
-  return {
-    actors: movie.Actors,
-    director: movie.Director,
-    genre: movie.Genre,
-    plot: movie.Plot,
-    poster: movie.Poster,
-    released: movie.Released,
-    runtime: parseInt(movie.Runtime, 10),
-    title: movie.Title,
-    year: movie.Year,
-    imdbID: movie.imdbID,
-    imdbRating: Number(movie.imdbRating),
-  };
-}
-
 interface DetailsBoxProps {
   movieId: string;
   watchedMovie: WatchedMovieType | null;
@@ -162,66 +137,10 @@ export default function DetailsBox(props: DetailsBoxProps) {
   const { movieId, watchedMovie, onAddWatched, onCloseDetails } = props;
 
   const [isOpen, setIsOpen] = useState(true);
-
-  const [status, setStatus] = useState<Status>('idle');
-  const [movie, setMovie] = useState<MovieDetailsType | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const { status, movie, error } = useDetails(movieId);
 
   const isLoading = status === 'loading';
   const isLoaded = status === 'success';
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchMovieDetails() {
-      try {
-        setStatus('loading');
-        setError(null);
-
-        const response = await fetch(
-          `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${movieId}`,
-          { signal: controller.signal },
-        );
-
-        if (!response.ok) {
-          throw new Error(DEFAULT_ERROR_MESSAGE);
-        }
-
-        const omdbResponse = (await response.json()) as OmdbResponse;
-
-        if (omdbResponse.Response === 'True') {
-          setStatus('success');
-          setMovie(convertMovieDetails(omdbResponse));
-        } else {
-          throw new Error(omdbResponse.Error);
-        }
-      } catch (err) {
-        setStatus('idle');
-        setMovie(null);
-
-        if (err instanceof Error) {
-          if (err.name !== 'AbortError') {
-            setError(err);
-          }
-        } else {
-          setError(new Error(DEFAULT_ERROR_MESSAGE));
-        }
-      }
-    }
-
-    if (!movieId) {
-      setStatus('idle');
-      setMovie(null);
-      setError(null);
-      return;
-    }
-
-    void fetchMovieDetails();
-
-    return () => {
-      controller.abort();
-    };
-  }, [movieId]);
 
   function handleToggle() {
     setIsOpen(!isOpen);
