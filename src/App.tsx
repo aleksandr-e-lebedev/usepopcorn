@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import NavBar from './components/NavBar';
 import Content from './components/Content';
@@ -8,36 +8,18 @@ import DetailsBox from './components/DetailsBox';
 import WatchedBox from './components/WatchedBox';
 
 import { WatchedMovieType } from './types';
-import { useMovies } from './hooks';
+import { useMovies, useLocalStorageState } from './hooks';
 import './App.styles.css';
-
-type StoredWatchedMovies = string | null | WatchedMovieType[];
-
-function getWatchedMoviesFromStorage(): WatchedMovieType[] {
-  let movies: StoredWatchedMovies = localStorage.getItem('watchedMovies');
-
-  if (movies) {
-    movies = JSON.parse(movies) as WatchedMovieType[];
-  } else {
-    movies = [];
-  }
-
-  return movies;
-}
-
-function setWatchedMoviesToStorage(movies: WatchedMovieType[]) {
-  const moviesToStore = JSON.stringify(movies);
-  localStorage.setItem('watchedMovies', moviesToStore);
-}
 
 export default function App() {
   const [query, setQuery] = useState('');
   const { status, movies, error } = useMovies(query);
 
   const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
-  const [watchedMovies, setWatchedMovies] = useState<WatchedMovieType[]>(
-    getWatchedMoviesFromStorage,
-  );
+
+  const [watchedMovies, setWatchedMovies] = useLocalStorageState<
+    WatchedMovieType[]
+  >('watchedMovies', []);
 
   const numResults = movies.length;
 
@@ -64,10 +46,6 @@ export default function App() {
     const moviesToSet = watchedMovies.filter((movie) => movie.imdbID !== id);
     setWatchedMovies(moviesToSet);
   }
-
-  useEffect(() => {
-    setWatchedMoviesToStorage(watchedMovies);
-  }, [watchedMovies]);
 
   return (
     <div className="app">
