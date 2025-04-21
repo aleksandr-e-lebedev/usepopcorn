@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import Box from '@/components/Box';
 import Loader from '@/components/Loader';
@@ -7,7 +7,7 @@ import ToggleButton from '@/components/ToggleButton';
 import StarRating from '@/components/StarRating';
 
 import { MovieDetailsType, WatchedMovieType } from '@/types';
-import { useDocumentTitle, useDetails } from '@/hooks';
+import { useDocumentTitle, useKey, useDetails } from '@/hooks';
 import './DetailsBox.styles.css';
 
 interface MovieDetailsProps {
@@ -40,18 +40,7 @@ function MovieDetails(props: MovieDetailsProps) {
   }
 
   useDocumentTitle(`Movie | ${movie.title}`);
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key.toLowerCase() === 'Escape'.toLowerCase()) onCloseDetails();
-    }
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onCloseDetails]);
+  useKey('Escape', onCloseDetails);
 
   return (
     <div className="movie-details">
