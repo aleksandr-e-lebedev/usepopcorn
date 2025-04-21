@@ -1,3 +1,5 @@
+import { useRef, useEffect } from 'react';
+
 import './NavBar.styles.css';
 
 function Logo() {
@@ -22,10 +24,30 @@ function Search({ placeholder, query, onQuery }: SearchProps) {
     onQuery(e.target.value);
   }
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key.toLowerCase() === 'Enter'.toLowerCase()) {
+        const inputEl = inputRef.current;
+        if (document.activeElement === inputEl) return;
+        inputEl?.focus();
+        onQuery('');
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onQuery]);
+
   return (
     <input
       className="search"
       type="text"
+      ref={inputRef}
       placeholder={placeholder}
       value={query}
       onChange={handleInputChange}
