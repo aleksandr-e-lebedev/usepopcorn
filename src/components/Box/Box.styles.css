@@ -1,0 +1,5 @@
+.box {
+  border-radius: 0.9rem;
+  background-color: var(--color-background-500);
+  overflow: auto;
+}

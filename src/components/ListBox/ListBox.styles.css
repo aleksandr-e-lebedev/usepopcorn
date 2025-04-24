@@ -1,0 +1,58 @@
+/* ListBox Styles */
+
+.list-box {
+  position: relative;
+}
+
+.list-box__toggle-button {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  z-index: 10;
+}
+
+/* MovieList Styles */
+
+.movie-list__item {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.movie-list__item:hover {
+  background-color: var(--color-background-100);
+}
+
+/* Movie Styles */
+
+.movie {
+  display: grid;
+
+  grid-template-columns: 4rem 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    'movie-image movie-title'
+    'movie-image movie-description';
+
+  column-gap: 2.4rem;
+  align-items: center;
+}
+
+.movie__image {
+  grid-area: movie-image;
+  width: 100%;
+}
+
+.movie__title {
+  grid-area: movie-title;
+  font-size: 1.8rem;
+}
+
+.movie__description {
+  grid-area: movie-description;
+
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+
+  font-size: 1.6rem;
+}

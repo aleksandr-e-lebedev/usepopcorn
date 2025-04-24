@@ -1,0 +1,15 @@
+.toggle-button {
+  height: 2.4rem;
+
+  border: none;
+  border-radius: 50%;
+
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--color-text);
+
+  background-color: var(--color-background-900);
+
+  aspect-ratio: 1;
+  cursor: pointer;
+}
